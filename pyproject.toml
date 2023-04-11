@@ -1,0 +1,20 @@
+[tool.ruff]
+ignore = [
+    # Line length violations
+    "E501", 
+    # f-string without placeholders
+    "F541"
+]
+
+select = [
+    # Pyflakes
+    "F",
+    # Pycodestyle
+    "E",
+    # isort
+    "I001"
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+check_untyped_defs = true
