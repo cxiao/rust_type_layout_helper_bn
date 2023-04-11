@@ -1,7 +1,20 @@
-from pyparsing import Keyword, Literal, Opt, ParseResults, Word, nums, printables
+from pprint import pprint
+
+from pyparsing import (
+    Group,
+    Keyword,
+    Literal,
+    Opt,
+    ParserElement,
+    ParseResults,
+    Word,
+    ZeroOrMore,
+    nums,
+    printables,
+)
 
 
-def type_definition_line(data: str) -> ParseResults:
+def type_definition_line() -> ParserElement:
     line_marker = Keyword("print-type-size")
     type_marker = Keyword("type:")
     name = (
@@ -21,10 +34,10 @@ def type_definition_line(data: str) -> ParseResults:
         line_marker + type_marker + name + size + Literal(",") + alignment_information
     )
 
-    return type_definition.parse_string(data)
+    return type_definition
 
 
-def field_definition_line(data: str) -> ParseResults:
+def field_definition_line() -> ParserElement:
     line_marker = Keyword("print-type-size")
     field_marker = Keyword("field")
     name = (
@@ -48,7 +61,7 @@ def field_definition_line(data: str) -> ParseResults:
         + Opt(Literal(",") + alignment_information)
     )
 
-    return field_definition.parse_string(data)
+    return field_definition
 
 
 def variant_definition_line(data: str) -> ParseResults:
@@ -77,42 +90,59 @@ def discriminant_definition_line(data: str) -> ParseResults:
     return discriminant_definition.parse_string(data)
 
 
-def padding_definition_line(data: str) -> ParseResults:
+def padding_definition_line() -> ParserElement:
     line_marker = Keyword("print-type-size")
     padding_marker = Keyword("padding:")
     size = Word(nums).set_results_name("padding_size") + Keyword("bytes")
 
     padding_definition = line_marker + padding_marker + size
 
-    return padding_definition.parse_string(data)
+    return padding_definition
 
 
-def end_padding_definition_line(data: str) -> ParseResults:
+def end_padding_definition_line() -> ParserElement:
     line_marker = Keyword("print-type-size")
     padding_marker = Keyword("end padding:")
     size = Word(nums).set_results_name("padding_size") + Keyword("bytes")
 
     padding_definition = line_marker + padding_marker + size
 
-    return padding_definition.parse_string(data)
+    return padding_definition
 
 
-print(
-    type_definition_line(
-        "print-type-size type: `unix::linux_like::linux::gnu::timex`: 208 bytes, alignment: 8 bytes"
-    ).as_dict()
-)
+field_test_data = """
+print-type-size type: `miniz_oxide::inflate::core::DecompressorOxide`: 10992 bytes, alignment: 8 bytes
+print-type-size     field `.tables`: 10464 bytes
+print-type-size     field `.bit_buf`: 8 bytes
+print-type-size     field `.num_bits`: 4 bytes
+print-type-size     field `.z_header0`: 4 bytes
+print-type-size     field `.z_header1`: 4 bytes
+print-type-size     field `.z_adler32`: 4 bytes
+print-type-size     field `.finish`: 4 bytes
+print-type-size     field `.block_type`: 4 bytes
+print-type-size     field `.check_adler32`: 4 bytes
+print-type-size     field `.dist`: 4 bytes
+print-type-size     field `.counter`: 4 bytes
+print-type-size     field `.num_extra`: 4 bytes
+print-type-size     field `.table_sizes`: 12 bytes
+print-type-size     field `.raw_header`: 4 bytes
+print-type-size     field `.len_codes`: 457 bytes
+print-type-size     field `.state`: 1 bytes
+print-type-size     end padding: 6 bytes
+"""
 
-print(field_definition_line("print-type-size     field `.k1`: 8 bytes").as_dict())
-print(
-    field_definition_line(
-        "print-type-size         field `.0`: 8 bytes, alignment: 8 bytes"
-    ).as_dict()
-)
+type_definition = type_definition_line() + ZeroOrMore(
+    Group(
+        field_definition_line()
+        | padding_definition_line()
+        | end_padding_definition_line()
+    )
+).set_results_name("fields")
+
+print(type_definition.parse_string(field_test_data).dump())
+pprint(type_definition.parse_string(field_test_data).as_dict())
 
 print(variant_definition_line("print-type-size     variant `Some`: 40 bytes").as_dict())
-
-print(padding_definition_line("print-type-size         padding: 3 bytes").as_dict())
 
 print(
     discriminant_definition_line("print-type-size     discriminant: 4 bytes").as_dict()
