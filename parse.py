@@ -144,9 +144,6 @@ print-type-size     field `.raw_header`: 4 bytes
 print-type-size     field `.len_codes`: 457 bytes
 print-type-size     field `.state`: 1 bytes
 print-type-size     end padding: 6 bytes
-"""
-
-variant_test_data = """
 print-type-size type: `std::result::Result<u16, std::num::ParseIntError>`: 4 bytes, alignment: 2 bytes
 print-type-size     discriminant: 1 bytes
 print-type-size     variant `Ok`: 3 bytes
@@ -154,6 +151,66 @@ print-type-size         padding: 1 bytes
 print-type-size         field `.0`: 2 bytes, alignment: 2 bytes
 print-type-size     variant `Err`: 1 bytes
 print-type-size         field `.0`: 1 bytes
+print-type-size type: `std::hash::sip::Hasher<std::hash::sip::Sip13Rounds>`: 72 bytes, alignment: 8 bytes
+print-type-size     field `._marker`: 0 bytes
+print-type-size     field `.state`: 32 bytes
+print-type-size     field `.k0`: 8 bytes
+print-type-size     field `.k1`: 8 bytes
+print-type-size     field `.length`: 8 bytes
+print-type-size     field `.tail`: 8 bytes
+print-type-size     field `.ntail`: 8 bytes
+print-type-size type: `std::hash::sip::Hasher<std::hash::sip::Sip24Rounds>`: 72 bytes, alignment: 8 bytes
+print-type-size     field `._marker`: 0 bytes
+print-type-size     field `.state`: 32 bytes
+print-type-size     field `.k0`: 8 bytes
+print-type-size     field `.k1`: 8 bytes
+print-type-size     field `.length`: 8 bytes
+print-type-size     field `.tail`: 8 bytes
+print-type-size     field `.ntail`: 8 bytes
+print-type-size type: `std::hash::sip::SipHasher24`: 72 bytes, alignment: 8 bytes
+print-type-size     field `.hasher`: 72 bytes
+print-type-size type: `std::iter::Map<std::str::SplitTerminator<'_, char>, core::str::LinesAnyMap>`: 72 bytes, alignment: 8 bytes
+print-type-size     field `.f`: 0 bytes
+print-type-size     field `.iter`: 72 bytes
+print-type-size type: `std::process::CommandEnvs<'_>`: 72 bytes, alignment: 8 bytes
+print-type-size     field `.iter`: 72 bytes
+print-type-size type: `std::result::Result<std::fs::Metadata, std::io::Error>`: 72 bytes, alignment: 8 bytes
+print-type-size     variant `Ok`: 72 bytes
+print-type-size         field `.0`: 72 bytes
+print-type-size     variant `Err`: 16 bytes
+print-type-size         padding: 8 bytes
+print-type-size         field `.0`: 8 bytes, alignment: 8 bytes
+print-type-size type: `std::result::Result<std::sys::windows::fs::FileAttr, std::io::Error>`: 72 bytes, alignment: 8 bytes
+print-type-size     variant `Ok`: 72 bytes
+print-type-size         field `.0`: 72 bytes
+print-type-size     variant `Err`: 16 bytes
+print-type-size         padding: 8 bytes
+print-type-size         field `.0`: 8 bytes, alignment: 8 bytes
+print-type-size type: `std::str::Lines<'_>`: 72 bytes, alignment: 8 bytes
+print-type-size     field `.0`: 72 bytes
+print-type-size type: `std::str::LinesAny<'_>`: 72 bytes, alignment: 8 bytes
+print-type-size     field `.0`: 72 bytes
+print-type-size type: `std::str::SplitTerminator<'_, char>`: 72 bytes, alignment: 8 bytes
+print-type-size     field `.0`: 72 bytes
+print-type-size type: `std::str::pattern::StrSearcherImpl`: 72 bytes, alignment: 8 bytes
+print-type-size     discriminant: 8 bytes
+print-type-size     variant `TwoWay`: 64 bytes
+print-type-size         field `.0`: 64 bytes
+print-type-size     variant `Empty`: 24 bytes
+print-type-size         field `.0`: 24 bytes
+print-type-size type: `std::sys::windows::fs::FileAttr`: 72 bytes, alignment: 8 bytes
+print-type-size     field `.file_index`: 16 bytes
+print-type-size     field `.creation_time`: 8 bytes
+print-type-size     field `.last_access_time`: 8 bytes
+print-type-size     field `.last_write_time`: 8 bytes
+print-type-size     field `.file_size`: 8 bytes
+print-type-size     field `.volume_serial_number`: 8 bytes
+print-type-size     field `.number_of_links`: 8 bytes
+print-type-size     field `.attributes`: 4 bytes
+print-type-size     field `.reparse_tag`: 4 bytes
+print-type-size type: `alloc::collections::btree::navigate::LazyLeafRange<alloc::collections::btree::node::marker::Immut<'_>, std::sys::windows::process::EnvKey, std::option::Option<std::ffi::OsString>>`: 64 bytes, alignment: 8 bytes
+print-type-size     field `.front`: 32 bytes
+print-type-size     field `.back`: 32 bytes
 """
 
 type_definition = type_definition_line() + ZeroOrMore(
@@ -166,5 +223,6 @@ type_definition = type_definition_line() + ZeroOrMore(
     )
 ).set_results_name("fields")
 
-print(type_definition.parse_string(variant_test_data).dump())
-pprint(type_definition.parse_string(variant_test_data).as_dict())
+types = ZeroOrMore(Group(type_definition)).set_results_name("types")
+
+pprint(types.parse_string(field_test_data).as_dict(), sort_dicts=False)
