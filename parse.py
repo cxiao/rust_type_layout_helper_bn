@@ -1,3 +1,4 @@
+import string
 from pprint import pprint
 
 from pyparsing import (
@@ -6,11 +7,9 @@ from pyparsing import (
     Literal,
     Opt,
     ParserElement,
-    ParseResults,
     Word,
     ZeroOrMore,
     nums,
-    printables,
 )
 
 
@@ -19,7 +18,11 @@ def type_definition_line() -> ParserElement:
     type_marker = Keyword("type:")
     name = (
         Literal("`")
-        + Word(printables, exclude_chars="`").set_results_name("type_name")
+        # Because type names can include spaces,
+        # such as in `Result<u8, Err>`,
+        # we need to use string.printable rather than
+        # pyparsing.printable, which excludes spaces.
+        + Word(string.printable, exclude_chars="`").set_results_name("type_name")
         + Literal("`")
         + Literal(":")
     )
@@ -42,7 +45,7 @@ def field_definition_line() -> ParserElement:
     field_marker = Keyword("field")
     name = (
         Literal("`")
-        + Word(printables, exclude_chars="`").set_results_name("field_name")
+        + Word(string.printable, exclude_chars="`").set_results_name("field_name")
         + Literal("`")
         + Literal(":")
     )
@@ -64,32 +67,6 @@ def field_definition_line() -> ParserElement:
     return field_definition
 
 
-def variant_definition_line(data: str) -> ParseResults:
-    line_marker = Keyword("print-type-size")
-    variant_marker = Keyword("variant")
-    name = (
-        Literal("`")
-        + Word(printables, exclude_chars="`").set_results_name("variant_name")
-        + Literal("`")
-        + Literal(":")
-    )
-    size = Word(nums).set_results_name("variant_size") + Keyword("bytes")
-
-    variant_definition = line_marker + variant_marker + name + size
-
-    return variant_definition.parse_string(data)
-
-
-def discriminant_definition_line(data: str) -> ParseResults:
-    line_marker = Keyword("print-type-size")
-    discriminant_marker = Keyword("discriminant:")
-    size = Word(nums).set_results_name("discriminant_size") + Keyword("bytes")
-
-    discriminant_definition = line_marker + discriminant_marker + size
-
-    return discriminant_definition.parse_string(data)
-
-
 def padding_definition_line() -> ParserElement:
     line_marker = Keyword("print-type-size")
     padding_marker = Keyword("padding:")
@@ -108,6 +85,44 @@ def end_padding_definition_line() -> ParserElement:
     padding_definition = line_marker + padding_marker + size
 
     return padding_definition
+
+
+def variant_definition_line() -> ParserElement:
+    line_marker = Keyword("print-type-size")
+    variant_marker = Keyword("variant")
+    name = (
+        Literal("`")
+        + Word(string.printable, exclude_chars="`").set_results_name("variant_name")
+        + Literal("`")
+        + Literal(":")
+    )
+    size = Word(nums).set_results_name("variant_size") + Keyword("bytes")
+
+    variant_definition = line_marker + variant_marker + name + size
+
+    return variant_definition
+
+
+def discriminant_definition_line() -> ParserElement:
+    line_marker = Keyword("print-type-size")
+    discriminant_marker = Keyword("discriminant:")
+    size = Word(nums).set_results_name("discriminant_size") + Keyword("bytes")
+
+    discriminant_definition = line_marker + discriminant_marker + size
+
+    return discriminant_definition
+
+
+def variant() -> ParserElement:
+    variant = variant_definition_line() + ZeroOrMore(
+        Group(
+            field_definition_line()
+            | padding_definition_line()
+            | end_padding_definition_line()
+        )
+    ).set_results_name("fields")
+
+    return variant
 
 
 field_test_data = """
@@ -131,19 +146,25 @@ print-type-size     field `.state`: 1 bytes
 print-type-size     end padding: 6 bytes
 """
 
+variant_test_data = """
+print-type-size type: `std::result::Result<u16, std::num::ParseIntError>`: 4 bytes, alignment: 2 bytes
+print-type-size     discriminant: 1 bytes
+print-type-size     variant `Ok`: 3 bytes
+print-type-size         padding: 1 bytes
+print-type-size         field `.0`: 2 bytes, alignment: 2 bytes
+print-type-size     variant `Err`: 1 bytes
+print-type-size         field `.0`: 1 bytes
+"""
+
 type_definition = type_definition_line() + ZeroOrMore(
     Group(
         field_definition_line()
         | padding_definition_line()
         | end_padding_definition_line()
+        | discriminant_definition_line()
+        | variant()
     )
 ).set_results_name("fields")
 
-print(type_definition.parse_string(field_test_data).dump())
-pprint(type_definition.parse_string(field_test_data).as_dict())
-
-print(variant_definition_line("print-type-size     variant `Some`: 40 bytes").as_dict())
-
-print(
-    discriminant_definition_line("print-type-size     discriminant: 4 bytes").as_dict()
-)
+print(type_definition.parse_string(variant_test_data).dump())
+pprint(type_definition.parse_string(variant_test_data).as_dict())
