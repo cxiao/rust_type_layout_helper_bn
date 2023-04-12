@@ -1,5 +1,6 @@
 import string
-from typing import Dict, TextIO
+from dataclasses import dataclass
+from typing import List, Optional, TextIO, Union
 
 from pyparsing import (
     Group,
@@ -11,6 +12,38 @@ from pyparsing import (
     ZeroOrMore,
     nums,
 )
+
+
+@dataclass
+class Field:
+    field_name: str
+    field_size: int
+    field_alignment_bytes: Optional[int]
+
+
+@dataclass
+class Padding:
+    padding_size: int
+
+
+@dataclass
+class Discriminant:
+    discriminant_size: int
+
+
+@dataclass
+class Variant:
+    variant_name: str
+    variant_size: int
+    fields: Optional[List[Union[Field, Padding]]]
+
+
+@dataclass
+class Type:
+    type_name: str
+    type_size: int
+    type_alignment_bytes: int
+    fields: List[Union[Field, Padding, Discriminant, Variant]]
 
 
 def _type_definition_line() -> ParserElement:
@@ -64,6 +97,16 @@ def _field_definition_line() -> ParserElement:
         + Opt(Literal(",") + alignment_information)
     )
 
+    field_definition.set_parse_action(
+        lambda results: Field(
+            field_name=results.field_name,  # type: ignore
+            field_size=int(results.field_size),  # type: ignore
+            field_alignment_bytes=int(results.field_alignment_bytes)  # type: ignore
+            if results.field_alignment_bytes
+            else None,
+        )
+    )
+
     return field_definition
 
 
@@ -74,6 +117,10 @@ def _padding_definition_line() -> ParserElement:
 
     padding_definition = line_marker + padding_marker + size
 
+    padding_definition.set_parse_action(
+        lambda results: Padding(int(results.padding_size))  # type: ignore
+    )
+
     return padding_definition
 
 
@@ -83,6 +130,10 @@ def _end_padding_definition_line() -> ParserElement:
     size = Word(nums).set_results_name("padding_size") + Keyword("bytes")
 
     padding_definition = line_marker + padding_marker + size
+
+    padding_definition.set_parse_action(
+        lambda results: Padding(int(results.padding_size))  # type: ignore
+    )
 
     return padding_definition
 
@@ -110,6 +161,10 @@ def _discriminant_definition_line() -> ParserElement:
 
     discriminant_definition = line_marker + discriminant_marker + size
 
+    discriminant_definition.set_parse_action(
+        lambda results: Discriminant(results.discriminant_size)  # type: ignore
+    )
+
     return discriminant_definition
 
 
@@ -122,10 +177,18 @@ def _variant() -> ParserElement:
         )
     ).set_results_name("fields")
 
+    variant.set_parse_action(
+        lambda results: Variant(
+            variant_name=results.variant_name,  # type: ignore
+            variant_size=results.variant_size,  # type: ignore
+            fields=results.fields.as_list(),  # type: ignore
+        )
+    )
+
     return variant
 
 
-def parse(data: TextIO) -> Dict:
+def parse(data: TextIO) -> List:
     type_definition = _type_definition_line() + ZeroOrMore(
         Group(
             _field_definition_line()
@@ -136,8 +199,17 @@ def parse(data: TextIO) -> Dict:
         )
     ).set_results_name("fields")
 
-    types = ZeroOrMore(Group(type_definition)).set_results_name("types")
-    return types.parse_file(data).as_dict()
+    type_definition.set_parse_action(
+        lambda results: Type(
+            type_name=results.type_name,  # type: ignore
+            type_size=int(results.type_size),  # type: ignore
+            type_alignment_bytes=int(results.type_alignment_bytes),  # type: ignore
+            fields=results.fields.as_list(),  # type: ignore
+        )
+    )
+
+    types = ZeroOrMore(Group(type_definition))
+    return types.parse_file(data).as_list()
 
 
 if __name__ == "__main__":
