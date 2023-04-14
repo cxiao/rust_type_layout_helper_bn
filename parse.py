@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from typing import List, Optional, TextIO, Union
 
 from pyparsing import (
-    Group,
     Keyword,
     Literal,
     Opt,
@@ -170,11 +169,9 @@ def _discriminant_definition_line() -> ParserElement:
 
 def _variant() -> ParserElement:
     variant = _variant_definition_line() + ZeroOrMore(
-        Group(
-            _field_definition_line()
-            | _padding_definition_line()
-            | _end_padding_definition_line()
-        )
+        _field_definition_line()
+        | _padding_definition_line()
+        | _end_padding_definition_line()
     ).set_results_name("fields")
 
     variant.set_parse_action(
@@ -190,13 +187,11 @@ def _variant() -> ParserElement:
 
 def parse(data: TextIO) -> List:
     type_definition = _type_definition_line() + ZeroOrMore(
-        Group(
-            _field_definition_line()
-            | _padding_definition_line()
-            | _end_padding_definition_line()
-            | _discriminant_definition_line()
-            | _variant()
-        )
+        _field_definition_line()
+        | _padding_definition_line()
+        | _end_padding_definition_line()
+        | _discriminant_definition_line()
+        | _variant()
     ).set_results_name("fields")
 
     type_definition.set_parse_action(
@@ -208,7 +203,7 @@ def parse(data: TextIO) -> List:
         )
     )
 
-    types = ZeroOrMore(Group(type_definition))
+    types = ZeroOrMore(type_definition)
     return types.parse_file(data).as_list()
 
 
