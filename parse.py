@@ -17,6 +17,7 @@ from pyparsing import (
 class Field:
     field_name: str
     field_size: int
+    field_offset_bytes: Optional[int]
     field_alignment_bytes: Optional[int]
 
 
@@ -82,6 +83,11 @@ def _field_definition_line() -> ParserElement:
         + Literal(":")
     )
     size = Word(nums).set_results_name("field_size") + Keyword("bytes")
+
+    offset_marker = Keyword("offset:")
+    offset_bytes = Word(nums).set_results_name("field_offset_bytes") + Keyword("bytes")
+    offset_information = offset_marker + offset_bytes
+
     alignment_marker = Keyword("alignment:")
     alignment_bytes = Word(nums).set_results_name("field_alignment_bytes") + Keyword(
         "bytes"
@@ -93,6 +99,7 @@ def _field_definition_line() -> ParserElement:
         + field_marker
         + name
         + size
+        + Opt(Literal(",") + offset_information)
         + Opt(Literal(",") + alignment_information)
     )
 
@@ -100,6 +107,7 @@ def _field_definition_line() -> ParserElement:
         lambda results: Field(
             field_name=results.field_name,  # type: ignore
             field_size=int(results.field_size),  # type: ignore
+            field_offset_bytes=int(results.field_offset_bytes) if results.field_offset_bytes else None,  # type: ignore
             field_alignment_bytes=int(results.field_alignment_bytes)  # type: ignore
             if results.field_alignment_bytes
             else None,
