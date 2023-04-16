@@ -1,0 +1,23 @@
+print-type-size type: `std::sys::windows::c::WIN32_FIND_DATAW`: 592 bytes, alignment: 4 bytes
+print-type-size     field `.dwFileAttributes`: 4 bytes
+print-type-size     field `.ftCreationTime`: 8 bytes
+print-type-size     field `.ftLastAccessTime`: 8 bytes
+print-type-size     field `.ftLastWriteTime`: 8 bytes
+print-type-size     field `.nFileSizeHigh`: 4 bytes
+print-type-size     field `.nFileSizeLow`: 4 bytes
+print-type-size     field `.dwReserved0`: 4 bytes
+print-type-size     field `.dwReserved1`: 4 bytes
+print-type-size     field `.cFileName`: 520 bytes
+print-type-size     field `.cAlternateFileName`: 28 bytes
+print-type-size type: `std::sys::windows::c::fd_set`: 520 bytes, alignment: 8 bytes
+print-type-size     field `.fd_count`: 4 bytes
+print-type-size     padding: 4 bytes
+print-type-size     field `.fd_array`: 512 bytes, alignment: 8 bytes
+print-type-size type: `std::backtrace::BacktraceFrame`: 312 bytes, alignment: 8 bytes
+print-type-size     field `.frame`: 288 bytes
+print-type-size     field `.symbols`: 24 bytes
+print-type-size type: `std::io::BufWriter<std::io::stdio::StdoutRaw>`: 32 bytes, alignment: 8 bytes
+print-type-size     field `.buf`: 24 bytes
+print-type-size     field `.inner`: 5 bytes
+print-type-size     field `.panicked`: 1 bytes
+print-type-size     end padding: 2 bytes

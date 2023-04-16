@@ -1,0 +1,8 @@
+print-type-size type: `std::marker::PhantomData<&std::sys::windows::args::Arg>`: 0 bytes, alignment: 1 bytes
+print-type-size type: `std::marker::PhantomData<&u8>`: 0 bytes, alignment: 1 bytes
+print-type-size type: `std::marker::PhantomData<(alloc::collections::btree::node::marker::Immut<'_>, alloc::collections::btree::node::marker::Leaf)>`: 0 bytes, alignment: 1 bytes
+print-type-size type: `std::marker::PhantomData<(alloc::collections::btree::node::marker::Immut<'_>, alloc::collections::btree::node::marker::LeafOrInternal)>`: 0 bytes, alignment: 1 bytes
+print-type-size type: `std::marker::PhantomData<(alloc::collections::btree::node::marker::Owned, alloc::collections::btree::node::marker::LeafOrInternal)>`: 0 bytes, alignment: 1 bytes
+print-type-size type: `std::marker::PhantomData<*mut ()>`: 0 bytes, alignment: 1 bytes
+print-type-size type: `std::marker::PhantomData<[std::mem::MaybeUninit<u8>]>`: 0 bytes, alignment: 1 bytes
+print-type-size type: `std::marker::PhantomData<[u8]>`: 0 bytes, alignment: 1 bytes

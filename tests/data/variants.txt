@@ -1,0 +1,32 @@
+print-type-size type: `std::sys_common::net::SocketAddrCRepr`: 28 bytes, alignment: 4 bytes
+print-type-size     variant `SocketAddrCRepr`: 28 bytes
+print-type-size         field `.v4`: 16 bytes
+print-type-size         field `.v6`: 28 bytes, offset: 0 bytes, alignment: 4 bytes
+print-type-size type: `Number`: 24 bytes, alignment: 8 bytes
+print-type-size     discriminant: 8 bytes
+print-type-size     variant `Complex`: 16 bytes
+print-type-size         field `.real`: 8 bytes
+print-type-size         field `.imaginary`: 8 bytes
+print-type-size     variant `Integer`: 8 bytes
+print-type-size         field `.0`: 8 bytes
+print-type-size     variant `Float`: 8 bytes
+print-type-size         field `.0`: 8 bytes
+print-type-size type: `core::num::fmt::Part<'_>`: 24 bytes, alignment: 8 bytes
+print-type-size     discriminant: 2 bytes
+print-type-size     variant `Copy`: 22 bytes
+print-type-size         padding: 6 bytes
+print-type-size         field `.0`: 16 bytes, alignment: 8 bytes
+print-type-size     variant `Zero`: 14 bytes
+print-type-size         padding: 6 bytes
+print-type-size         field `.0`: 8 bytes, alignment: 8 bytes
+print-type-size     variant `Num`: 2 bytes
+print-type-size         field `.0`: 2 bytes
+print-type-size type: `std::str::pattern::SearchStep`: 24 bytes, alignment: 8 bytes
+print-type-size     discriminant: 8 bytes
+print-type-size     variant `Match`: 16 bytes
+print-type-size         field `.0`: 8 bytes
+print-type-size         field `.1`: 8 bytes
+print-type-size     variant `Reject`: 16 bytes
+print-type-size         field `.0`: 8 bytes
+print-type-size         field `.1`: 8 bytes
+print-type-size     variant `Done`: 0 bytes

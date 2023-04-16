@@ -1,0 +1,32 @@
+print-type-size type: `std::char::EscapeDefault`: 16 bytes, alignment: 8 bytes
+print-type-size     field `.state`: 16 bytes
+print-type-size type: `std::char::EscapeDefaultState`: 16 bytes, alignment: 8 bytes
+print-type-size     variant `Unicode`: 16 bytes
+print-type-size         field `.0`: 16 bytes
+print-type-size     variant `Char`: 4 bytes
+print-type-size         field `.0`: 4 bytes
+print-type-size     variant `Backslash`: 4 bytes
+print-type-size         field `.0`: 4 bytes
+print-type-size     variant `Done`: 0 bytes
+print-type-size type: `std::char::EscapeUnicode`: 16 bytes, alignment: 8 bytes
+print-type-size     field `.hex_digit_idx`: 8 bytes
+print-type-size     field `.c`: 4 bytes
+print-type-size     field `.state`: 1 bytes
+print-type-size     end padding: 3 bytes
+print-type-size type: `std::collections::Bound<usize>`: 16 bytes, alignment: 8 bytes
+print-type-size     discriminant: 8 bytes
+print-type-size     variant `Included`: 8 bytes
+print-type-size         field `.0`: 8 bytes
+print-type-size     variant `Excluded`: 8 bytes
+print-type-size         field `.0`: 8 bytes
+print-type-size     variant `Unbounded`: 0 bytes
+print-type-size type: `std::collections::TryReserveError`: 16 bytes, alignment: 8 bytes
+print-type-size     field `.kind`: 16 bytes
+print-type-size type: `std::collections::TryReserveErrorKind`: 16 bytes, alignment: 8 bytes
+print-type-size     variant `AllocError`: 16 bytes
+print-type-size         field `.non_exhaustive`: 0 bytes
+print-type-size         field `.layout`: 16 bytes
+print-type-size     variant `CapacityOverflow`: 0 bytes
+print-type-size type: `std::collections::hash_map::RandomState`: 16 bytes, alignment: 8 bytes
+print-type-size     field `.k0`: 8 bytes
+print-type-size     field `.k1`: 8 bytes
