@@ -216,8 +216,16 @@ def parse(data: TextIO) -> List:
 
 
 if __name__ == "__main__":
+    from argparse import ArgumentParser
     from pprint import pprint
 
-    with open("tests/data/print-type-sizes.txt", "r") as f:
+    argparser = ArgumentParser()
+    argparser.add_argument(
+        "print_type_sizes_output_file",
+        help="A file containing Rust type layout information, which is the output of `rustc +nightly -Zprint-type-sizes`",
+    )
+    args = argparser.parse_args()
+
+    with open(args.print_type_sizes_output_file, "r") as f:
         result = parse(f)
         pprint(result)
