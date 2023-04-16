@@ -169,7 +169,7 @@ def _discriminant_definition_line() -> ParserElement:
     discriminant_definition = line_marker + discriminant_marker + size
 
     discriminant_definition.set_parse_action(
-        lambda results: Discriminant(results.discriminant_size)  # type: ignore
+        lambda results: Discriminant(int(results.discriminant_size))  # type: ignore
     )
 
     return discriminant_definition
@@ -185,7 +185,7 @@ def _variant() -> ParserElement:
     variant.set_parse_action(
         lambda results: Variant(
             variant_name=results.variant_name,  # type: ignore
-            variant_size=results.variant_size,  # type: ignore
+            variant_size=int(results.variant_size),  # type: ignore
             fields=results.fields.as_list(),  # type: ignore
         )
     )
