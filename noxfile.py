@@ -14,3 +14,11 @@ def lint(session):
 
     session.run("ruff", ".")
     session.run("mypy", ".")
+
+
+@nox.session
+def test(session):
+    session.install("-r", "dev-requirements.txt")
+    session.install("-r", "requirements.txt")
+
+    session.run("pytest", "-vv", ".")
