@@ -212,7 +212,7 @@ def parse(data: TextIO) -> List:
     )
 
     types = ZeroOrMore(type_definition)
-    return types.parse_file(data).as_list()
+    return types.parse_file(data, parse_all=True).as_list()
 
 
 if __name__ == "__main__":

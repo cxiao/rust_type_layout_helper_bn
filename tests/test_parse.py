@@ -1,10 +1,12 @@
+import io
 from pathlib import Path
 
 import pytest
+from pyparsing import ParseException
 
 from ..parse import Discriminant, Field, Padding, Type, Variant, parse
 
-test_data = [
+test_type_parse_data = [
     (
         "box-types.txt",
         [
@@ -610,9 +612,18 @@ test_data = [
 ]
 
 
-@pytest.mark.parametrize("data_filename, data_parsed_expected", test_data)
+@pytest.mark.parametrize("data_filename, data_parsed_expected", test_type_parse_data)
 def test_type_parse(data_filename, data_parsed_expected):
     data_filepath = Path("tests") / Path("data") / data_filename
     with open(data_filepath, "r") as type_sizes_file:
         result = parse(type_sizes_file)
         assert result == data_parsed_expected
+
+
+def test_parse_failure():
+    test_parse_failure_data = """print-type-size type: `std::marker::PhantomData<*mut ()>`: 0 bytes, alignment: 1 bytes
+print-type-size ty"""
+    with io.StringIO(test_parse_failure_data) as type_sizes_file:
+        with pytest.raises(ParseException) as err:
+            parse(type_sizes_file)
+        assert "Expected end of text" in err.value.explain()
