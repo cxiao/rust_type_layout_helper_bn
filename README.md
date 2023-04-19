@@ -1,5 +1,9 @@
 # Rust Type Layout Helper
 
+An extremely experimental Binary Ninja importer for the output of `rustc +nightly -Zprint-type-sizes`.
+
+![A screenshot of Binary Ninja's Types view in the sidebar, showing the imported definitions and layouts of several Rust types from `std::sys::windows`.](images/std-sys-windows-types-border.png)
+
 ## Development
 
 To set up a development environment:
