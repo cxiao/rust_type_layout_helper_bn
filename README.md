@@ -136,6 +136,20 @@ In the future it would be nice to:
 - Add scripts / plugins to import the type information into IDA and Ghidra.
 - Use a Rust compiler plugin to emit better type information than we get from `-Zprint-type-sizes`? Maybe a combination of the information we get from `-Zprint-type-sizes` and `#[rustc_layout(...)]`. It would also be nice to emit the type information in a format which is slightly easier to parse (e.g. JSON).
 
+## Installation
+
+This plugin can be installed via either:
+
+1) Searching for the _Rust Type Layout Helper_ plugin in Binary Ninja's built-in plugin manager (_Plugins > Manage Plugins_). _This is the recommended method._
+
+2) Cloning this repository into your user plugins folder.
+    - The [location of the user plugins folder will vary depending on the platform Binary Ninja is installed on](https://docs.binary.ninja/guide/index.html#user-folder). The easiest way to find the location of the folder is via the _Plugins > Open Plugin Folder..._ command.
+    - If you are performing an installation via this method, you must also install this plugin's Python dependencies manually. This can be done by either:
+        - Running the _Install python3 module..._ command (via the Command Palette), and pasting the contents of [`requirements.txt`](requirements.txt) in this repository into the dialog window.
+        - Running `pip install -r requirements.txt` in the Python environment used by Binary Ninja.
+
+This plugin requires Python >= 3.7, and Binary Ninja version >= 3.2.3814.
+
 ## Development
 
 ### Setting up a development environment
