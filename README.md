@@ -67,6 +67,7 @@ struct core::num::dec2flt::decimal::Decimal __packed
     char .truncated;
     char _padding[0x3];
 };
+
 struct std::result::Result<std::sys::windows::fs::ReadDir, std::io::Error> __packed
 {
     union __packed
@@ -85,6 +86,7 @@ struct std::result::Result<std::sys::windows::fs::ReadDir, std::io::Error>::Ok _
 {
     char .0[0x268];
 };
+
 struct std::sys::windows::fs::ReadDir __packed
 {
     int64_t .handle;
@@ -92,6 +94,7 @@ struct std::sys::windows::fs::ReadDir __packed
     char .first[0x254];
     int32_t _padding;
 };
+
 struct std::option::Option<std::result::Result<std::fs::DirEntry, std::io::Error>> __packed
 {
     enum std::option::Option<std::result::Result<std::fs::DirEntry, std::io::Error>>::discriminant discriminant;
@@ -113,6 +116,8 @@ struct std::option::Option<std::result::Result<std::fs::DirEntry, std::io::Error
 
 enum std::option::Option<std::result::Result<std::fs::DirEntry, std::io::Error>>::discriminant : uint64_t
 {
+    Some = 0xffffffffffffffff,
+    None = 0xffffffffffffffff
 };
 ```
 
@@ -122,6 +127,7 @@ There are some caveats to using this:
 - The layout of data types is not stable, and can change between compilations!
 - Only the nightly builds of rustc supports the `print-type-sizes` flag.
 - Binary Ninja's support for working with unions in the decompilation is currently quite poor (see [Vector35/binaryninja-api#1013](https://github.com/Vector35/binaryninja-api/issues/1013), [Vector35/binaryninja-api#4218](https://github.com/Vector35/binaryninja-api/issues/4218)). This may make it difficult to work with the generated `variants` unions, such as `std::option::Option<std::result::Result<std::fs::DirEntry, std::io::Error>>::variants` in the example above.
+- When importing sum types (i.e. Rust enums), the discriminant value used to represent each variant in the sum type does not necessarily match the ordering of those variant in the type layout information, i.e. the first variant is not necessarily discriminant value 0, etc. The information emitted by rustc's `print-type-sizes` flag also does not include the discriminant value for each variant. Therefore, all variants are assigned a discriminant value of -1. To determine the actual determinant value, it is up to the user to reverse the code where the sum type is used.
 
 In the future it would be nice to:
 - Add scripts / plugins to import the type information into IDA and Ghidra.

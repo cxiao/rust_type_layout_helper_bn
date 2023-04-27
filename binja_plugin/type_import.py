@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from binaryninja.binaryview import BinaryView
 from binaryninja.log import Logger
@@ -6,6 +6,7 @@ from binaryninja.types import (
     ArrayType,
     EnumerationBuilder,
     IntegerType,
+    QualifiedName,
     StructureBuilder,
     StructureType,
     StructureVariant,
@@ -66,13 +67,19 @@ def _create_bn_types_for_rust_type(bv: BinaryView, rust_type: RustType):
 
     bn_struct = StructureBuilder.create(packed=True)
     rust_field_types = [type(field) for field in rust_type.fields]
-    if Variant in rust_field_types:  # The Rust type is a sum type, i.e. a Rust enum
-        # TODO: Handle the case where there is only variant, and no discriminant!
-        # This shows up in cases like (ironically)
-        # repr(C) unions like SocketAddrCRepr: https://github.com/rust-lang/rust/blob/8a778ca1e35e4a8df95c00d800100d95e63e7722/library/std/src/sys_common/net.rs#L725
+
+    # The Rust type is a sum type, i.e. a Rust enum.
+    if Variant in rust_field_types:
+        # TODO: Handle repr(C) unions correctly;
+        # it seems these are not being created with the correct size.
+        # For example, see SocketAddrCRepr:
+        # https://github.com/rust-lang/rust/blob/8a778ca1e35e4a8df95c00d800100d95e63e7722/library/std/src/sys_common/net.rs#L725
         bn_variants_union = StructureBuilder.create(
             packed=True, type=StructureVariant.UnionStructureType
         )
+
+        # It is possible to have a sum type with variants, but with no discriminant.
+        bn_discriminant_enum_name: Optional[str] = None
         for rust_type_field in rust_type.fields:
             if isinstance(rust_type_field, Discriminant):
                 bn_discriminant_enum_name = f"{rust_type.type_name}::discriminant"
@@ -86,7 +93,8 @@ def _create_bn_types_for_rust_type(bv: BinaryView, rust_type: RustType):
                 )
                 bn_struct.append(
                     type=Type.named_type_from_registered_type(
-                        bv, bn_discriminant_enum_name
+                        view=bv,
+                        name=bn_discriminant_enum_name,
                     ),
                     name="discriminant",
                 )
@@ -102,16 +110,33 @@ def _create_bn_types_for_rust_type(bv: BinaryView, rust_type: RustType):
                 )
                 bn_variants_union.append(
                     type=Type.named_type_from_registered_type(
-                        bv, bn_variant_struct_name
+                        view=bv,
+                        name=bn_variant_struct_name,
                     ),
                     name=rust_type_field.variant_name,
                 )
+                if bn_discriminant_enum_name is not None:
+                    # Modify the existing discriminant enum type
+                    # to add an entry for this variant.
+                    with Type.builder(
+                        bv=bv,
+                        name=QualifiedName(bn_discriminant_enum_name),
+                    ) as bn_discriminant_enum:
+                        # The discriminant value used to represent each variant
+                        # does not necessarily match the ordering of those variants
+                        # in the type layout information, i.e. the first variant
+                        # is not necessarily discriminant value 0, etc.
+                        # The information emitted by rustc's `print-type-sizes` flag
+                        # also does not include the discriminant value for each variant.
+                        # Therefore, all variants are assigned a discriminant value of -1.
+                        bn_discriminant_enum.append(rust_type_field.variant_name, -1)
 
         bn_struct.append(
             type=bn_variants_union,
             name=f"{rust_type.type_name}::variants",
         )
 
+    # The Rust type is a product type, i.e. a Rust struct.
     else:
         for rust_type_field in rust_type.fields:
             if isinstance(rust_type_field, Field):
