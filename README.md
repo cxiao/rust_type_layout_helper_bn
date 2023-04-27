@@ -15,17 +15,20 @@ Compile some Rust code with the following options:
 MacOS / Linux:
 
 ```sh
+cargo clean
 RUSTFLAGS=-Zprint-type-sizes cargo +nightly build -j 1 > type-sizes.txt
 ```
 
 Windows (Powershell):
 
 ```powershell
+cargo clean
 $env:RUSTFLAGS="-Zprint-type-sizes"; cargo +nightly build -j 1 > type-sizes.txt
 ```
 
-The following options are all necessary for this to work:
-- `-Zprint-type-sizes` in the `RUSTFLAGS` passed to rustc.
+The following are all necessary for this to work:
+- `cargo clean` is required before you do the build, i.e. this needs to be a completely fresh build. This is required to avoid missing information in the output.
+- `-Zprint-type-sizes` in the `RUSTFLAGS` passed to rustc. This flag is what actually triggers `rustc` to produce the type information.
 - `+nightly` passed to cargo, as the `print-type-sizes` flag is only supported on nightly toolchain builds.
 - `-j 1` to avoid shuffled lines in the output.
 
