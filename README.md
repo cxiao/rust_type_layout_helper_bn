@@ -140,7 +140,7 @@ In the future it would be nice to:
 
 ### Setting up a development environment
 
-To set up a development environment:
+To set up a development environment, including setting up a Python virtual environment:
 
 ```
 python -m venv .venv && . .venv/bin/activate
@@ -185,6 +185,11 @@ To test the plugin locally in your own Binary Ninja installation during developm
     ```powershell
     New-Item -ItemType Junction -Value . -Path "$env:APPDATA\Binary Ninja\plugins\rust_type_layout_helper"
     ```
+
+You should then change the values of the following Python settings in Binary Ninja to point to inside your development folder's virtual environment:
+
+- `python.binaryOverride`: Set this to the path of the Python interpreter inside your development virtual environment, e.g. `$DEVELOPMENT_FOLDER/rust_type_layout_helper/.venv/bin/python/`
+- `python.virtualenv`: Set this to the path of the `site-packages` directory inside your development virtual environment, e.g. `$DEVELOPMENT_FOLDER/rust_type_layout_helper/.venv/lib/python3.11/site-packages`
 
 ## Acknowledgements and resources
 
