@@ -24,7 +24,7 @@
     "Windows": "Installation via the Binary Ninja plugin manager is recommended. For alternative installation instructions, see the [Installation section in the README on the GitHub repository for this plugin](https://github.com/cxiao/rust_type_layout_helper_bn#installation)."
   },
   "dependencies": {},
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "Cindy Xiao",
   "minimumbinaryninjaversion": 3814
 }
