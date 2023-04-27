@@ -7,7 +7,7 @@
   "api": [
     "python3"
   ],
-  "description": "",
+  "description": "An extremely experimental Binary Ninja importer for the type layout information emitted by the -Zprint-type-sizes flag of the Rust compiler.",
   "longdescription": "",
   "license": {
     "name": "MIT",
@@ -23,12 +23,7 @@
     "Linux": "Installation via the Binary Ninja plugin manager is recommended. For alternative installation instructions, see the [Installation section in the README on the GitHub repository for this plugin](https://github.com/cxiao/rust_type_layout_helper_bn#installation).",
     "Windows": "Installation via the Binary Ninja plugin manager is recommended. For alternative installation instructions, see the [Installation section in the README on the GitHub repository for this plugin](https://github.com/cxiao/rust_type_layout_helper_bn#installation)."
   },
-  "dependencies": {
-    "pip": [],
-    "apt": [],
-    "installers": [],
-    "other": []
-  },
+  "dependencies": {},
   "version": "0.1.0",
   "author": "Cindy Xiao",
   "minimumbinaryninjaversion": 3814
