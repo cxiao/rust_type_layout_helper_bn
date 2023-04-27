@@ -135,6 +135,8 @@ In the future it would be nice to:
 
 ## Development
 
+### Setting up a development environment
+
 To set up a development environment:
 
 ```
@@ -144,14 +146,25 @@ pip install -r dev-requirements.txt
 python $PATH_TO_BINARY_NINJA_INSTALLATION/scripts/install_api.py
 ```
 
-For formatting and linting (optional), install [Nox](https://nox.thea.codes/en/stable/tutorial.html), then:
+For formatting, linting, and running unit tests locally, install [Nox](https://nox.thea.codes/en/stable/tutorial.html), then:
+
+```
+nox
+```
+
+You can also invoke each task separately; see [noxfile.py](noxfile.py) for more details on available tasks:
 
 ```
 nox -s format
 nox -s lint
+nox -s test
 ```
 
-To test the plugin, create a symbolic link between your development folder, and the [Binary Ninja user plugins folder](https://docs.binary.ninja/guide/index.html#user-folder), so that your development folder is loaded by Binary Ninja on startup as a plugin.
+Linting and unit testing (both against multiple Python versions) are also set up in CI on [GitHub Actions](.github/workflows/ci.yml).
+
+### Testing local versions of the plugin
+
+To test the plugin locally in your own Binary Ninja installation during development, create a symbolic link between your development folder, and the [Binary Ninja user plugins folder](https://docs.binary.ninja/guide/index.html#user-folder), so that your development folder is loaded by Binary Ninja on startup as a plugin.
 
 - MacOS:
 
