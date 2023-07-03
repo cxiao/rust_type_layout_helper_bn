@@ -197,7 +197,7 @@ To test the plugin locally in your own Binary Ninja installation during developm
 
 - Windows (Powershell):
     ```powershell
-    New-Item -ItemType Junction -Value . -Path "$env:APPDATA\Binary Ninja\plugins\rust_type_layout_helper"
+    New-Item -ItemType Junction -Value $(Get-Location) -Path "$env:APPDATA\Binary Ninja\plugins\rust_type_layout_helper"
     ```
 
 You should then change the values of the following Python settings in Binary Ninja to point to inside your development folder's virtual environment:
